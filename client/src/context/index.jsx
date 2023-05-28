@@ -4,6 +4,7 @@ import { useAddress, useContract, useMetamask, useContractWrite } from '@thirdwe
 import { ethers } from 'ethers';
 import { EditionMetadataWithOwnerOutputSchema } from '@thirdweb-dev/sdk';
 
+
 const StateContext = createContext();
 
 export const StateContextProvider = ({ children }) => {
@@ -13,19 +14,21 @@ export const StateContextProvider = ({ children }) => {
   const address = useAddress();
   const connect = useMetamask();
 
+ 
+
   const publishCampaign = async (form) => {
    
-    let owner = address;
-    let title = form.title;   
+     let owner = address;
+     let title = form.title;   
     let description = form.description;
-    let target = form.target;
-    let deadline = new Date(form.deadline).getTime();
-    let image = form.image;
+     let target =  ethers.utils.parseUnits(form.target, 18); 
+     let deadline = new Date(form.deadline).getTime();
+     let image = form.image;
 
     try {
-      const data = await mutateAsync([
-      owner, title, description, target, deadline, image
-      ])
+      const data = await mutateAsync ({
+        args: [owner, title, description, target, deadline, image],
+      });
 
       console.log("contract call success", data)
     } catch (error) {
